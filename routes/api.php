@@ -6,14 +6,15 @@ use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\AccessKeyController;
 use App\Http\Controllers\AuthController;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use App\Http\Controllers\SalaController;
 
-// Login sem middleware
+// Login sem middleware testado ok
 Route::post('login', [AuthController::class, 'login']);
 Route::post('/definir-senha', [AuthController::class, 'definirSenha']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 
-// Rotas protegidas que precisam de autenticação
+// Rotas protegidas que precisam de autenticação testado ok
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('reservas', [ReservaController::class, 'index']);
     Route::get('reservas/{id}', [ReservaController::class, 'show']);
@@ -26,6 +27,10 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('notificacoes/{userId}', [NotificacaoController::class, 'index']);
 Route::put('notificacoes/{id}', [NotificacaoController::class, 'update']);
 
-// Rotas de chaves de acesso
-Route::post('access-keys', [AccessKeyController::class, 'store']);
-Route::get('access-keys/{id}', [AccessKeyController::class, 'show']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/salas', [SalaController::class, 'index']);       // listar salas
+    Route::post('/salas', [SalaController::class, 'store']);      // criar sala
+    Route::get('/salas/{id}', [SalaController::class, 'show']);   // mostrar sala específica
+    Route::put('/salas/{id}', [SalaController::class, 'update']); // atualizar
+    Route::delete('/salas/{id}', [SalaController::class, 'destroy']); // deletar
+});
